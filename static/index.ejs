@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Google Maps Multiple Markers</title>
+    <script
+      type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDo7nFkoUthlGms4De0miS4EPfupB5x0cY"
+    ></script>
+
+     <!-- <script
+    type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood&key=AIzaSyDo7nFkoUthlGms4De0miS4EPfupB5x0cY"
+  ></script>
+
+    -->
+
+
+      
+
+      
+       <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?
+    key=AIzaSyDo7nFkoUthlGms4De0miS4EPfupB5x0cY&amp;sensor=false&amp;libraries=geometry"></script>
+      
+
+    <!-- </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDo7nFkoUthlGms4De0miS4EPfupB5x0cY&libraries=places"></script>
+     -->
+
+    
+  </head>
+  <body>
+    <div id="map" style="width: 500px; height: 400px"></div>
+    
+
+   <script type="text/javascript">
+
+     
+   
+      var locations = [];
+
+
+      let x = async () => {
+        let newData= [];
+        const res = await fetch("/shops", {
+          method: "GET",
+          //body: JSON.stringify({ username, password }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        let hghghg= await res.json();
+
+        console.log(hghghg);
+        hghghg.data.forEach((e, i) => {
+          newData.push([
+            e.title,
+            e.location.coordinates[0],
+            e.location.coordinates[1],
+            i + 1,
+          ]);
+        });
+        console.log(newData);
+        let locations = newData;
+        // var locations = [
+        //   ["Bondi Beach", -33.890542, 151.274856, 4],
+        //   ["Coogee Beach", -33.923036, 151.259052, 5],
+        //   ["Cronulla Beach", -34.028249, 151.157507, 3],
+        //   ["Manly Beach", -33.80010128657071, 151.28747820854187, 2],
+        //   ["Maroubra Beach", -33.950198, 151.259302, 1],
+        // ];
+       
+             console.log(locations);
+
+          
+         
+
+           var map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 10,
+          center: new google.maps.LatLng(locations[0][1], locations[0][2]),
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        });
+
+      
+        
+        
+      
+
+        
+         var infowindow = new google.maps.InfoWindow();
+        for (let i = 0; i < locations.length; i++) {
+          var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+            map: map,
+          });
+
+           //***********Line****************//
+
+         
+           const forPolyLine = newData.map((item) => {
+            return { lat: item[1], lng: item[2] }
+             
+            });
+
+             console.log('polyline things: ', forPolyLine);
+         
+            
+
+        const flightPath = new google.maps.Polyline({
+        path: forPolyLine,
+        geodesic: true,
+        strokeColor: "#0000FF",
+        strokeOpacity: 1.0,
+         strokeWeight: 4,
+      
+
+      });
+  
+      const distance = google.maps.geometry.spherical.computeLength(flightPath.getPath().getArray())
+      console.log("Total length: ", distance/1000);
+
+     flightPath.setMap(map);
+     
+     
+    //  *********  Draw route between two marker ******
+     
+     
+
+   
+
+
+
+   
+   
+   
+    //**********Rout****************//
+
+    // function myfunction(){
+    //     var map;
+    //     var start = new google.maps.LatLng(locations[0][1], locations[0][2]);
+    //      var end = new google.maps.LatLng(locations[i][1], locations[i][2]);
+    //     // var mapOptions ={
+    //     //     zoom : 10,
+    //     //     center : start 
+    //     // };
+    //     map = new google.maps.Map(document.getElementById('map'),mapOptions);
+    //     var display = new google.maps.DirectionsRenderer();
+    //     var services = new google.maps.DirectionsService();
+    //     display.setMap(map);
+    //         var request ={
+    //             origin : start,
+    //             destination:end,
+    //             travelMode: 'DRIVING'
+    //         };
+    //         services.route(request,function(result,status){
+    //             if(status =='OK'){
+    //                 display.setDirections(result);
+    //             }
+    //         });
+        
+    //     function mapLocation() {
+    // var directionsDisplay;
+    // var directionsService = new google.maps.DirectionsService();
+    // var map;
+    // map = new google.maps.Map(document.getElementById('map-canvas'), map);
+    //     directionsDisplay.setMap(map);
+    //    // google.maps.event.addDomListener(document.getElementById('routebtn'), 'click', calcRoute);
+    // }
+         
+          
+     
+         
+    // add event addListener
+    
+      google.maps.event.addListener(
+            marker,
+            "click",
+            (function (marker, i) {
+              return function () {
+                infowindow.setContent(locations[i][0]);
+                infowindow.open(map, marker);
+              };
+            })(marker, i)
+          );
+        }
+     };
+    // }
+    
+    
+
+      x();
+    </script>
+    
+  </body>
+</html>
+
