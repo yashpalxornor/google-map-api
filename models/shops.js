@@ -8,4 +8,5 @@ const shopsSchema = new mongoose.Schema({
 
 shopsSchema.index({ location: "2dsphere" });
 
+
 module.exports = mongoose.model("shops", shopsSchema);
